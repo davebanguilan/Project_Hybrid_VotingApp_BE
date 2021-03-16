@@ -37,6 +37,15 @@ namespace Votes.WebApi
             {
                 settings.Title = "Votes";
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("VotesPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +59,8 @@ namespace Votes.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("VotesPolicy");
 
             app.UseAuthorization();
 
