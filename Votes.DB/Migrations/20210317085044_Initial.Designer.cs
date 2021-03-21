@@ -9,7 +9,7 @@ using Votes.DB;
 namespace Votes.DB.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210310144202_Initial")]
+    [Migration("20210317085044_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
