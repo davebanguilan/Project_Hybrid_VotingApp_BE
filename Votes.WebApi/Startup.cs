@@ -1,3 +1,5 @@
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,9 +8,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Votes.Core;
 using Votes.DB;
@@ -33,6 +37,10 @@ namespace Votes.WebApi
 
             services.AddTransient<IVotesServices, VotesServices>();
 
+            services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
+
             services.AddSwaggerDocument(settings =>
             {
                 settings.Title = "Votes";
@@ -46,6 +54,25 @@ namespace Votes.WebApi
                         builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                     });
             });
+
+            var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
+            var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+
+            services.AddAuthentication(opts =>
+            {
+                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(opts =>
+                {
+                    opts.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = issuer,
+                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret))
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +88,8 @@ namespace Votes.WebApi
             app.UseRouting();
 
             app.UseCors("VotesPolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

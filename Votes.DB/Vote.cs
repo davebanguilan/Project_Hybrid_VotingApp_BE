@@ -10,5 +10,7 @@ namespace Votes.DB
         public string Question { get; set; }
         public string Choice { get; set; }
         public string Count { get; set; }
+        public string Creator { get; set; }
+        public string Voter { get; set; }
     }
 }

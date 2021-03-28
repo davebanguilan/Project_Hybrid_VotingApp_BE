@@ -33,6 +33,8 @@ namespace Votes.Core
             dbVote.Question = vote.Question;
             dbVote.Choice = vote.Choice;
             dbVote.Count = vote.Count;
+            dbVote.Creator = vote.Creator;
+            dbVote.Voter = vote.Voter;
             _context.SaveChanges();
 
             return dbVote;
