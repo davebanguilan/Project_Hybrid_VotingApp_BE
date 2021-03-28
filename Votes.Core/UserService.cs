@@ -36,7 +36,7 @@ namespace Votes.Core
                 Token = JwtGenerator.GenerateUserToken(user.Email),
                 Email = user.Email,
                 Password = user.Password,
-                Name = user.Name
+                Name = dbUser.Name
             };
         }
 
